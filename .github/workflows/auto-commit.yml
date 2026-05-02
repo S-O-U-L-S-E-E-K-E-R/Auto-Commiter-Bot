@@ -26,8 +26,12 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     env:
-      AUTHOR_NAME:  ${{ vars.AUTHOR_NAME  || 'S-O-U-L-S-E-E-K-E-R' }}
-      AUTHOR_EMAIL: ${{ vars.AUTHOR_EMAIL || 'dmitriwarner4@gmail.com' }}
+      # Set these as repository variables (Settings → Secrets and variables →
+      # Actions → Variables) so the values aren't committed in plaintext:
+      #   gh variable set AUTHOR_NAME  -b "<your name>"
+      #   gh variable set AUTHOR_EMAIL -b "<your verified email>"
+      AUTHOR_NAME:  ${{ vars.AUTHOR_NAME }}
+      AUTHOR_EMAIL: ${{ vars.AUTHOR_EMAIL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
