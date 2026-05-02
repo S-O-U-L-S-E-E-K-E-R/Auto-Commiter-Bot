@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AUTHOR_NAME:  ${{ vars.AUTHOR_NAME  || 'S-O-U-L-S-E-E-K-E-R' }}
-      AUTHOR_EMAIL: ${{ vars.AUTHOR_EMAIL || 'wdmitrijohn@gmail.com' }}
+      AUTHOR_EMAIL: ${{ vars.AUTHOR_EMAIL || 'dmitriwarner4@gmail.com' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

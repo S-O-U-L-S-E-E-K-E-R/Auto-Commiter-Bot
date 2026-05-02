@@ -66,13 +66,25 @@ fi
 git config user.name  "$AUTHOR_NAME"
 git config user.email "$AUTHOR_EMAIL"
 
-# ---- Pull latest before mutating ----------------------------------------
-git fetch --quiet origin
 DEFAULT_BRANCH="$(git symbolic-ref --short HEAD 2>/dev/null || echo main)"
-git pull --quiet --rebase origin "$DEFAULT_BRANCH" || {
-    echo "pull failed; aborting to avoid mid-flight conflicts" >&2
-    exit 1
-}
+
+# ---- Pull latest before mutating (skip in dry-run; skip if no remote) ---
+if ! "$DRY_RUN" && git remote get-url origin >/dev/null 2>&1; then
+    git fetch --quiet origin || true
+    if git rev-parse --verify --quiet "origin/$DEFAULT_BRANCH" >/dev/null; then
+        # Refuse to pull if the working tree is dirty — would break --rebase.
+        # Ignore the script itself being modified (common during dev).
+        if ! git diff-index --quiet HEAD -- ':!auto-commit.sh'; then
+            echo "working tree has uncommitted changes; refusing to pull/rebase" >&2
+            git status --short >&2
+            exit 1
+        fi
+        git pull --quiet --rebase origin "$DEFAULT_BRANCH" || {
+            echo "pull failed; aborting to avoid mid-flight conflicts" >&2
+            exit 1
+        }
+    fi
+fi
 
 # ---- Read current count from README -------------------------------------
 COUNT="$(grep -oE 'Count Commits:[[:space:]]*[0-9]+' "$README" | grep -oE '[0-9]+$' || echo 0)"
@@ -94,25 +106,37 @@ MESSAGES=(
 )
 MSG="${MESSAGES[RANDOM % ${#MESSAGES[@]}]} #$NEXT"
 
-# ---- Compute current streak (consecutive UTC days with a commit) --------
-STREAK=1
-LAST_COMMIT_DAY="$(git log -1 --format=%cs 2>/dev/null || true)"
+# ---- Compute streak: today's commit + consecutive previous UTC days ----
+# GitHub's contribution graph uses UTC day boundaries, so convert each commit's
+# ISO timestamp to its UTC calendar day before counting.
 TODAY="$(date -u +%Y-%m-%d)"
-if [ -n "$LAST_COMMIT_DAY" ] && [ "$LAST_COMMIT_DAY" != "$TODAY" ]; then
-    YESTERDAY="$(date -u -d 'yesterday' +%Y-%m-%d 2>/dev/null || date -u -v-1d +%Y-%m-%d)"
-    if [ "$LAST_COMMIT_DAY" = "$YESTERDAY" ]; then
-        # Count back through commit days to find streak length
-        STREAK="$(git log --format=%cs | awk -v t="$TODAY" '
-            NR==1 { last=$1; if (last==t) { c=1 } else { c=1; last=t } ; next }
-            {
-                cmd = "date -u -d \"" last " -1 day\" +%Y-%m-%d 2>/dev/null"
-                cmd | getline prev; close(cmd)
-                if ($1 == prev) { c++; last=prev } else { exit }
-            }
-            END { print c }
-        ')"
+STREAK=1
+DAYS_WITH_COMMITS="$(
+    git log --format=%cI 2>/dev/null | while IFS= read -r iso; do
+        [ -n "$iso" ] && date -u -d "$iso" +%Y-%m-%d 2>/dev/null
+    done | sort -u
+)"
+day="$TODAY"
+while true; do
+    prev="$(date -u -d "$day -1 day" +%Y-%m-%d 2>/dev/null \
+            || date -u -v-1d -j -f '%Y-%m-%d' "$day" +%Y-%m-%d 2>/dev/null)"
+    [ -z "$prev" ] && break
+    if echo "$DAYS_WITH_COMMITS" | grep -qx "$prev"; then
         STREAK=$((STREAK + 1))
+        day="$prev"
+    else
+        break
     fi
+done
+
+# ---- Dry-run reports without touching disk -----------------------------
+if "$DRY_RUN"; then
+    echo "DRY RUN — would commit:"
+    echo "  count:  $COUNT -> $NEXT"
+    echo "  msg:    $MSG"
+    echo "  streak: $STREAK"
+    echo "  ts:     $NOW"
+    exit 0
 fi
 
 # ---- Update README block ------------------------------------------------
@@ -126,21 +150,10 @@ awk -v c="$NEXT" -v t="$NOW" -v m="$MSG" -v s="$STREAK" '
 ' "$README" > "$TMP" && mv "$TMP" "$README"
 
 # ---- Append to commit-log.md (newest stays at top of table) -------------
-# Insert a new row after the table header.
 awk -v n="$NEXT" -v t="$NOW" -v m="$MSG" '
     !inserted && /^\|---/ { print; print "| " n " | " t " | " m " |"; inserted=1; next }
     { print }
 ' "$LOG" > "$TMP" && mv "$TMP" "$LOG"
-
-# ---- Commit + push ------------------------------------------------------
-if "$DRY_RUN"; then
-    echo "DRY RUN — would commit:"
-    echo "  count: $COUNT -> $NEXT"
-    echo "  msg:   $MSG"
-    echo "  streak: $STREAK"
-    git --no-pager diff --stat
-    exit 0
-fi
 
 git add README.md commit-log.md
 if "$FORCE" || ! git diff --cached --quiet; then
