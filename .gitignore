@@ -1,0 +1,4 @@
+.commit-lock
+cron.log
+*.log
+.DS_Store

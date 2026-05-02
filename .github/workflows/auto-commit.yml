@@ -1,0 +1,41 @@
+name: auto-commit
+
+on:
+  schedule:
+    # Daily at 14:13 UTC. Pick a non-round minute so it doesn't compete with
+    # the 14:00 cron stampede on GitHub Actions runners.
+    - cron: '13 14 * * *'
+  workflow_dispatch:        # allow manual trigger from the Actions tab
+
+# IMPORTANT: For commits to count toward your contribution graph, the COMMIT
+# MUST be authored with an email verified on your GitHub account.
+#
+# Two ways to push:
+#  A) Default GITHUB_TOKEN (this workflow) -- simplest, but commits show up as
+#     "github-actions[bot]" and DO count toward your contribution graph as
+#     long as the AUTHOR_EMAIL below matches a verified email on your account.
+#  B) Personal Access Token (PAT) stored as a secret named BOT_PAT. Use this
+#     if you want the commits to also be attributable to you in the API. To
+#     enable, replace ${{ secrets.GITHUB_TOKEN }} below with ${{ secrets.BOT_PAT }}
+#     and create the PAT with `repo` scope.
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    env:
+      AUTHOR_NAME:  ${{ vars.AUTHOR_NAME  || 'S-O-U-L-S-E-E-K-E-R' }}
+      AUTHOR_EMAIL: ${{ vars.AUTHOR_EMAIL || 'wdmitrijohn@gmail.com' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run auto-commit
+        run: |
+          chmod +x ./auto-commit.sh
+          ./auto-commit.sh
