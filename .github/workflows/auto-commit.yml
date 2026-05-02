@@ -2,22 +2,27 @@ name: auto-commit
 
 on:
   schedule:
-    # Daily at 14:13 UTC. Pick a non-round minute so it doesn't compete with
-    # the 14:00 cron stampede on GitHub Actions runners.
-    - cron: '13 14 * * *'
-  workflow_dispatch:        # allow manual trigger from the Actions tab
+    # Multiple cron lines = multiple runs per day. The bot will respect
+    # DAILY_CAP from bot.conf so you can't accidentally exceed it.
+    # All times are UTC.
+    - cron: '13 14 * * *'    # ~14:13 UTC daily
+    # Uncomment more lines for darker green squares (more commits/day):
+    # - cron: '47 18 * * *'  # ~18:47 UTC
+    # - cron: '23 22 * * *'  # ~22:23 UTC
+    # - cron: '37  3 * * *'  # ~03:37 UTC
+    # - cron: '11  9 * * *'  # ~09:11 UTC
 
-# IMPORTANT: For commits to count toward your contribution graph, the COMMIT
-# MUST be authored with an email verified on your GitHub account.
-#
-# Two ways to push:
-#  A) Default GITHUB_TOKEN (this workflow) -- simplest, but commits show up as
-#     "github-actions[bot]" and DO count toward your contribution graph as
-#     long as the AUTHOR_EMAIL below matches a verified email on your account.
-#  B) Personal Access Token (PAT) stored as a secret named BOT_PAT. Use this
-#     if you want the commits to also be attributable to you in the API. To
-#     enable, replace ${{ secrets.GITHUB_TOKEN }} below with ${{ secrets.BOT_PAT }}
-#     and create the PAT with `repo` scope.
+  workflow_dispatch:
+    inputs:
+      commits:
+        description: 'How many commits this run (overrides bot.conf COMMITS_PER_RUN)'
+        required: false
+        default: ''
+        type: string
+
+# Repository variables required (Settings → Secrets and variables → Actions → Variables):
+#   AUTHOR_NAME       e.g. "S-O-U-L-S-E-E-K-E-R"
+#   AUTHOR_EMAIL      verified email or noreply form (counts toward graph)
 
 permissions:
   contents: write
@@ -26,10 +31,6 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     env:
-      # Set these as repository variables (Settings → Secrets and variables →
-      # Actions → Variables) so the values aren't committed in plaintext:
-      #   gh variable set AUTHOR_NAME  -b "<your name>"
-      #   gh variable set AUTHOR_EMAIL -b "<your verified email>"
       AUTHOR_NAME:  ${{ vars.AUTHOR_NAME }}
       AUTHOR_EMAIL: ${{ vars.AUTHOR_EMAIL }}
     steps:
@@ -42,4 +43,8 @@ jobs:
       - name: Run auto-commit
         run: |
           chmod +x ./auto-commit.sh
-          ./auto-commit.sh
+          if [ -n "${{ inputs.commits }}" ]; then
+            ./auto-commit.sh --commits "${{ inputs.commits }}"
+          else
+            ./auto-commit.sh
+          fi
