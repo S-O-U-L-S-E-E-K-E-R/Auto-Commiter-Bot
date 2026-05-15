@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 129 | 2026-05-15T16:16:48Z | Background sweep #129 |
 | 128 | 2026-05-15T16:14:57Z | Routine entry #128 |
 | 127 | 2026-05-14T16:25:53Z | Activity update #127 |
 | 126 | 2026-05-14T16:24:20Z | Auto log #126 |
