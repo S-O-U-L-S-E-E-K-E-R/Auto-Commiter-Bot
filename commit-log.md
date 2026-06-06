@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 241 | 2026-06-06T15:41:27Z | Auto rotation #241 |
 | 240 | 2026-06-06T15:40:23Z | Background sweep #240 |
 | 239 | 2026-06-06T15:38:59Z | Maintenance tick #239 |
 | 238 | 2026-06-05T16:51:41Z | Maintenance tick #238 |
