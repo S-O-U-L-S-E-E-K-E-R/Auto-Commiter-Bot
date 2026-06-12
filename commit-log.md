@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 274 | 2026-06-12T17:15:56Z | Background sweep #274 |
 | 273 | 2026-06-12T17:15:19Z | Daily journal entry #273 |
 | 272 | 2026-06-12T17:13:53Z | Daily activity log #272 |
 | 271 | 2026-06-11T17:53:08Z | Auto-bump counter #271 |
