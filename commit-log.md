@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 407 | 2026-07-07T16:49:04Z | Auto rotation #407 |
 | 406 | 2026-07-07T16:48:03Z | Activity update #406 |
 | 405 | 2026-07-07T16:47:17Z | Counter increment #405 |
 | 404 | 2026-07-07T16:45:47Z | Background sweep #404 |
