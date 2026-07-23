@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 481 | 2026-07-23T16:07:32Z | Background sweep #481 |
 | 480 | 2026-07-23T16:06:55Z | Cycle commit #480 |
 | 479 | 2026-07-23T16:05:34Z | Maintenance tick #479 |
 | 478 | 2026-07-23T16:03:41Z | Daily activity log #478 |
