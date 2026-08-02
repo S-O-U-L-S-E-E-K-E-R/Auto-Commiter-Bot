@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 525 | 2026-08-02T15:17:10Z | Auto rotation #525 |
 | 524 | 2026-08-01T15:25:47Z | Regular update #524 |
 | 523 | 2026-08-01T15:23:59Z | Auto rotation #523 |
 | 522 | 2026-08-01T15:22:05Z | Cycle commit #522 |
