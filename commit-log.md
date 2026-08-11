@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 563 | 2026-08-11T15:19:32Z | Background sweep #563 |
 | 562 | 2026-08-11T15:17:41Z | Schedule run #562 |
 | 561 | 2026-08-11T15:14:46Z | Maintenance tick #561 |
 | 560 | 2026-08-11T15:13:57Z | Auto-bump counter #560 |
