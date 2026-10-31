@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 954 | 2026-10-31T18:31:36Z | Background sweep #954 |
 | 953 | 2026-10-31T18:30:20Z | Activity update #953 |
 | 952 | 2026-10-30T19:24:13Z | Schedule run #952 |
 | 951 | 2026-10-30T19:22:13Z | Counter increment #951 |
