@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 974 | 2026-11-04T20:52:24Z | Background sweep #974 |
 | 973 | 2026-11-04T20:51:16Z | Periodic sync #973 |
 | 972 | 2026-11-04T20:50:48Z | Schedule run #972 |
 | 971 | 2026-11-04T20:47:53Z | Daily activity log #971 |
