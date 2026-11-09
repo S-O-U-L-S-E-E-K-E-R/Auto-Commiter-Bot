@@ -4,6 +4,7 @@ Append-only log of automated activity. Most recent first.
 
 | # | Timestamp (UTC) | Message |
 |---|---|---|
+| 996 | 2026-11-09T23:26:08Z | Background sweep #996 |
 | 995 | 2026-11-09T23:25:26Z | Daily journal entry #995 |
 | 994 | 2026-11-08T18:54:06Z | Heartbeat commit #994 |
 | 993 | 2026-11-08T18:51:55Z | Maintenance tick #993 |
